@@ -15,6 +15,7 @@ addons:
     - liblmdb-dev
 
 before_script:
+  - if test "$TRAVIS_OS_NAME" == "linux"; then sudo apt-get install liblmdb-dev; fi
   - if test "$TRAVIS_OS_NAME" == "osx"; then export FrameworkPathOverride=/Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/; else export FrameworkPathOverride=/usr/lib/mono/4.5/; fi
 
 script:
