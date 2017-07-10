@@ -5,6 +5,8 @@
     using System.Threading;
     using LightningDB;
 
+    using static Serializer;
+
     public class ChangeStream : IDisposable
     {
         private static readonly DatabaseConfiguration s_defaultDbConfig = new DatabaseConfiguration
@@ -21,7 +23,7 @@
         }
 
         private KeyValuePair<long,byte[]> Convert(KeyValuePair<byte[],byte[]> pair) =>
-            new KeyValuePair<long, byte[]>(BitConverter.ToInt64(pair.Key, 0), pair.Value);
+            new KeyValuePair<long, byte[]>(DeserializeLong(pair.Key), pair.Value);
 
         public KeyValuePair<long,byte[]> GetLastCheckpoint()
         {
@@ -60,7 +62,7 @@
 
         public IEnumerable<KeyValuePair<long, byte[]>> ReadAfter(long key, int maxCount = 512)
         {
-            var byteKey = BitConverter.GetBytes(key);
+            var byteKey = SerializeLong(key);
             using (var tx = _env.BeginTransaction(TransactionBeginFlags.ReadOnly))
             using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
             using (var c = tx.CreateCursor(db))
@@ -79,7 +81,7 @@
         }
         public IEnumerable<KeyValuePair<long, byte[]>> ReadBackwords(long key, int maxCount = 512)
         {
-            var byteKey = BitConverter.GetBytes(key);
+            var byteKey = SerializeLong(key);
             using (var tx = _env.BeginTransaction(TransactionBeginFlags.ReadOnly))
             using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
             using (var c = tx.CreateCursor(db))

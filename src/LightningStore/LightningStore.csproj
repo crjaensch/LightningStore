@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\common.props" />
+
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <Title>LightningDb facades to easily build an event stream and a document store.</Title>
+    <Description>LightningDb facades to easily build an event stream and a document store. By default JIL serialization is build in.</Description>
   </PropertyGroup>
 
   <ItemGroup>
