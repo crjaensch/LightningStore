@@ -1,2 +1,2 @@
-# LightningStore [![Build Status](https://travis-ci.org/mihasic/LightningStore.svg?branch=master)](https://travis-ci.org/mihasic/LightningStore) [![NuGet](https://img.shields.io/nuget/v/LightningStore.svg)](https://www.nuget.org/packages/LuceneSearch/)
+# LightningStore [![Build Status](https://travis-ci.org/mihasic/LightningStore.svg?branch=master)](https://travis-ci.org/mihasic/LightningStore) [![Build status](https://ci.appveyor.com/api/projects/status/082d5kff43a0keoq/branch/master?svg=true)](https://ci.appveyor.com/project/mihasic/lightningstore/branch/master) [![NuGet](https://img.shields.io/nuget/v/LightningStore.svg)](https://www.nuget.org/packages/LuceneSearch/)
 Stream store and simple document store abstractions on top of LightningDB
