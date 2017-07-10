@@ -9,6 +9,10 @@ matrix:
     - os: osx
       osx_image: xcode8
       dotnet: 1.0.4
+addons:
+  apt:
+    packages:
+    - liblmdb-dev
 
 before_script:
   - if test "$TRAVIS_OS_NAME" == "osx"; then export FrameworkPathOverride=/Library/Frameworks/Mono.framework/Versions/Current/lib/mono/4.5/; else export FrameworkPathOverride=/usr/lib/mono/4.5/; fi
