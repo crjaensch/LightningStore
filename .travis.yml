@@ -9,10 +9,6 @@ matrix:
     - os: osx
       osx_image: xcode8
       dotnet: 1.0.4
-addons:
-  apt:
-    packages:
-    - liblmdb-dev
 
 before_script:
   - if test "$TRAVIS_OS_NAME" == "linux"; then sudo apt-get install liblmdb-dev; fi
