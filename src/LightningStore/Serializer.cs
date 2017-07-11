@@ -9,7 +9,7 @@ namespace LightningStore
     {
         private static Jil.Options s_options = new Jil.Options(
             false, true, false, Jil.DateTimeFormat.MillisecondsSinceUnixEpoch,
-            false, Jil.UnspecifiedDateTimeKindBehavior.IsUTC
+            true, Jil.UnspecifiedDateTimeKindBehavior.IsUTC
         );
 
         public static T DeserializeJson<T>(byte[] data)
