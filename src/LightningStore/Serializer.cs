@@ -1,10 +1,10 @@
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
-
 namespace LightningStore
 {
+    using System;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Text;
+
     public static class Serializer
     {
         private static Jil.Options s_options = new Jil.Options(

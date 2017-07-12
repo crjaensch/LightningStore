@@ -3,8 +3,8 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>
-    <Title>LightningDb facades to easily build an event stream and a document store.</Title>
-    <Description>LightningDb facades to easily build an event stream and a document store. By default JIL serialization is build in.</Description>
+    <Title>Simple database and stream store</Title>
+    <Description>LightningDb facades to easily build an embedded event stream and a document store. By default JIL serialization is build in.</Description>
   </PropertyGroup>
 
   <ItemGroup>
