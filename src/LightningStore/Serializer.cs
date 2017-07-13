@@ -59,7 +59,16 @@ namespace LightningStore
         public static readonly Func<byte[], string> DeserializeString = Encoding.UTF8.GetString;
         public static byte[] SerializeGuid(Guid g) => g.ToByteArray();
         public static Guid DeserializeGuid(byte[] bs) => new Guid(bs);
-        public static readonly Func<long, byte[]> SerializeLong = BitConverter.GetBytes;
-        public static long DeserializeLong(byte[] bs) => BitConverter.ToInt64(bs, 0);
+        public static byte[] SerializeLong(long key)
+        {
+            var bs = BitConverter.GetBytes(key);
+            Array.Reverse(bs);
+            return bs;
+        }
+
+        public static long DeserializeLong(byte[] bs){
+            Array.Reverse(bs);
+            return BitConverter.ToInt64(bs, 0);
+        }
     }
 }

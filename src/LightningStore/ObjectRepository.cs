@@ -1,28 +1,31 @@
 namespace LightningStore
 {
-    using LightningDB;
+    using RocksDbSharp;
     using System;
     using System.Collections.Generic;
 
     public class ObjectRepository<T, TKey> : IDisposable
     {
-        private readonly LightningEnvironment _env;
         private readonly ObjectRepositorySettings<T, TKey> _settings;
+        private static readonly DbOptions s_defaultDbConfig = new DbOptions().SetCreateIfMissing(true);
 
         public ObjectRepository(ObjectRepositorySettings<T, TKey> settings)
         {
             _settings = settings;
-            _env = new LightningEnvironment(settings.Path);
-            _env.Open();
+            EnsureCreated();
+        }
+        private void EnsureCreated()
+        {
+            using (var db = RocksDb.Open(s_defaultDbConfig, _settings.Path, new ColumnFamilies()))
+                db.GetProperty("rocksdb.estimate-num-keys");
         }
 
         public ObjectRepositoryTransaction<T, TKey> BeginTransaction(bool readOnly = false)
         {
-            var tx = _env.BeginTransaction(readOnly ? TransactionBeginFlags.ReadOnly : TransactionBeginFlags.None);
-            return new ObjectRepositoryTransaction<T, TKey>(
-                _settings,
-                tx,
-                tx.OpenDatabase());
+            var db = readOnly
+                ? RocksDb.OpenReadOnly(s_defaultDbConfig, _settings.Path, new ColumnFamilies(), false)
+                : RocksDb.Open(s_defaultDbConfig, _settings.Path, new ColumnFamilies());
+            return new ObjectRepositoryTransaction<T, TKey>(_settings, db);
         }
 
         public T Get(TKey key)
@@ -55,26 +58,19 @@ namespace LightningStore
 
         public void Put(TKey key, T data)
         {
-            _env.WithAutogrowth(() =>
+            using (var db = RocksDb.Open(s_defaultDbConfig, _settings.Path, new ColumnFamilies()))
             {
-                using (var tx = BeginTransaction())
-                {
-                    tx.Put(key, data);
-                    tx.Commit();
-                }
-            });
+                db.Put(_settings.SerializeKey(key), _settings.Serialize(data));
+            }
         }
 
         public void Put(IEnumerable<KeyValuePair<TKey, T>> data)
         {
-            _env.WithAutogrowth(() =>
+            using (var tx = BeginTransaction())
             {
-                using (var tx = BeginTransaction())
-                {
-                    tx.Put(data);
-                    tx.Commit();
-                }
-            });
+                tx.Put(data);
+                tx.Commit();
+            }
         }
 
         public IEnumerable<KeyValuePair<TKey, T>> List()
@@ -84,6 +80,6 @@ namespace LightningStore
                     yield return p;
         }
 
-        public void Dispose() => _env.Dispose();
+        public void Dispose() {}
     }
 }
