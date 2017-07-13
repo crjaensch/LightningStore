@@ -15,11 +15,16 @@
         };
 
         private readonly LightningEnvironment _env;
+        private readonly LightningDatabase _db;
 
         public ChangeStream(string dirPath)
         {
             _env = new LightningEnvironment(dirPath);
             _env.Open();
+            using (var tx = _env.BeginTransaction())
+            {
+                _db = tx.OpenDatabase(configuration: s_defaultDbConfig);
+            }
         }
 
         private KeyValuePair<long,byte[]> Convert(KeyValuePair<byte[],byte[]> pair) =>
@@ -28,8 +33,7 @@
         public KeyValuePair<long,byte[]> GetLastCheckpoint()
         {
             using (var tx = _env.BeginTransaction(TransactionBeginFlags.ReadOnly))
-            using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
-            using (var c = tx.CreateCursor(db))
+            using (var c = tx.CreateCursor(_db))
             {
                 if (c.MoveToLast()) return Convert(c.Current);
                 else return new KeyValuePair<long, byte[]>(-1L, null);
@@ -41,17 +45,16 @@
             return _env.WithAutogrowth(() =>
             {
                 using (var tx = _env.BeginTransaction())
-                using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
                 {
                     var nextKey = 0L;
-                    using (var c = tx.CreateCursor(db))
+                    using (var c = tx.CreateCursor(_db))
                     {
                         if (c.MoveToLast())
                             nextKey = BitConverter.ToInt64(c.Current.Key, 0) + 1L;
                     }
                     foreach (var value in values)
                     {
-                        tx.Put(db, BitConverter.GetBytes(nextKey), value, PutOptions.AppendData | PutOptions.NoOverwrite);
+                        tx.Put(_db, BitConverter.GetBytes(nextKey), value, PutOptions.AppendData | PutOptions.NoOverwrite);
                         nextKey++;
                     }
                     tx.Commit();
@@ -64,8 +67,7 @@
         {
             var byteKey = SerializeLong(key);
             using (var tx = _env.BeginTransaction(TransactionBeginFlags.ReadOnly))
-            using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
-            using (var c = tx.CreateCursor(db))
+            using (var c = tx.CreateCursor(_db))
             {
                 if (key >= 0)
                 { 
@@ -83,8 +85,7 @@
         {
             var byteKey = SerializeLong(key);
             using (var tx = _env.BeginTransaction(TransactionBeginFlags.ReadOnly))
-            using (var db = tx.OpenDatabase(configuration: s_defaultDbConfig))
-            using (var c = tx.CreateCursor(db))
+            using (var c = tx.CreateCursor(_db))
             {
                 c.MoveTo(byteKey);
                 var count = 0;
@@ -96,6 +97,10 @@
             }
         }
 
-        public void Dispose() => _env.Dispose();
+        public void Dispose()
+        {
+            _db.Dispose();
+            _env.Dispose();
+        }
     }
 }

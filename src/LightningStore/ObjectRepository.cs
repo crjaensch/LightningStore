@@ -7,6 +7,7 @@ namespace LightningStore
     public class ObjectRepository<T, TKey> : IDisposable
     {
         private readonly LightningEnvironment _env;
+        private readonly LightningDatabase _db;
         private readonly ObjectRepositorySettings<T, TKey> _settings;
 
         public ObjectRepository(ObjectRepositorySettings<T, TKey> settings)
@@ -14,6 +15,10 @@ namespace LightningStore
             _settings = settings;
             _env = new LightningEnvironment(settings.Path);
             _env.Open();
+            using (var tx = _env.BeginTransaction())
+            {
+                _db = tx.OpenDatabase();
+            }
         }
 
         public ObjectRepositoryTransaction<T, TKey> BeginTransaction(bool readOnly = false)
@@ -22,7 +27,7 @@ namespace LightningStore
             return new ObjectRepositoryTransaction<T, TKey>(
                 _settings,
                 tx,
-                tx.OpenDatabase());
+                _db);
         }
 
         public T Get(TKey key)
@@ -84,6 +89,10 @@ namespace LightningStore
                     yield return p;
         }
 
-        public void Dispose() => _env.Dispose();
+        public void Dispose()
+        {
+            _db.Dispose();
+            _env.Dispose();
+        }
     }
 }

@@ -63,10 +63,6 @@ namespace LightningStore
 
         public void Commit() => _tx.Commit();
 
-        public void Dispose()
-        {
-            _db.Dispose();
-            _tx.Dispose();
-        }
+        public void Dispose() => _tx.Dispose();
     }
 }
