@@ -43,7 +43,7 @@ namespace LightningStore
 
         public void Put(TKey key, T data) =>
             _tx.Put(_db, _settings.SerializeKey(key), _settings.Serialize(data), PutOptions.NoDuplicateData);
- 
+
         public void Put(IEnumerable<KeyValuePair<TKey, T>> data)
         {
             foreach (var p in data)
@@ -59,6 +59,14 @@ namespace LightningStore
                     yield return new KeyValuePair<TKey, T>(
                         _settings.DeserializeKey(c.Current.Key),
                         _settings.Deserialize(c.Current.Value));
+        }
+
+        public void Delete(params TKey[] keys)
+        {
+            foreach (var key in keys)
+            {
+                _tx.Delete(_db, _settings.SerializeKey(key));
+            }
         }
 
         public void Commit() => _tx.Commit();

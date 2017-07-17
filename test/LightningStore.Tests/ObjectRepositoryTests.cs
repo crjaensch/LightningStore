@@ -40,6 +40,17 @@ namespace LightningStore.Tests
         }
 
         [Fact]
+        public void WheDeletedDoesNotReturnAnything()
+        {
+            var doc = new Document { Name = "test delete", Value = "some value" };
+            _repo.Put(doc.Name, doc);
+            _repo.Delete(doc.Name);
+
+            var retreived = _repo.Get(doc.Name);
+            retreived.ShouldBeNull();
+        }
+
+        [Fact]
         public void CanListAllStoredDocs()
         {
             var docs = Enumerable.Range(0, 10)

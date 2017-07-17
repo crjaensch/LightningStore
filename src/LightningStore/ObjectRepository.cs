@@ -82,6 +82,18 @@ namespace LightningStore
             });
         }
 
+        public void Delete(params TKey[] keys)
+        {
+            _env.WithAutogrowth(() =>
+            {
+                using (var tx = BeginTransaction())
+                {
+                    tx.Delete(keys);
+                    tx.Commit();
+                }
+            });
+        }
+
         public IEnumerable<KeyValuePair<TKey, T>> List()
         {
             using (var tx = BeginTransaction(true))
