@@ -51,6 +51,12 @@ namespace LightningStore.Tests
         }
 
         [Fact]
+        public void WheDeletingNonExistentShouldNotThrow()
+        {
+            _repo.Delete("does not exist, but deleting");
+        }
+
+        [Fact]
         public void CanListAllStoredDocs()
         {
             var docs = Enumerable.Range(0, 10)

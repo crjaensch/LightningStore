@@ -2,6 +2,7 @@ namespace LightningStore
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using LightningDB;
 
     public class ObjectRepositoryTransaction<T, TKey> : IDisposable
@@ -63,9 +64,9 @@ namespace LightningStore
 
         public void Delete(params TKey[] keys)
         {
-            foreach (var key in keys)
+            foreach (var key in keys.Select(_settings.SerializeKey))
             {
-                _tx.Delete(_db, _settings.SerializeKey(key));
+                if (_tx.ContainsKey(_db, key)) _tx.Delete(_db, key);
             }
         }
 
