@@ -9,7 +9,7 @@ namespace LightningStore.Tests
 
     public class ObjectRepositoryTests : IDisposable
     {
-        private readonly ObjectRepository<Document, string> _repo;
+        private readonly ObjectRepository<string, Document> _repo;
         private readonly string _path;
 
         public ObjectRepositoryTests()
@@ -17,7 +17,7 @@ namespace LightningStore.Tests
             _path = Path.Combine(Path.GetTempPath(), "LightningStore", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_path);
             
-            _repo = new ObjectRepository<Document, string>(
+            _repo = new ObjectRepository<string, Document>(
                 new DefaultObjectRepositorySettings<Document>(_path));
         }
 

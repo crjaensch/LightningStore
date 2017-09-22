@@ -4,13 +4,13 @@ namespace LightningStore
     using System;
     using System.Collections.Generic;
 
-    public class ObjectRepository<T, TKey> : IDisposable
+    public class ObjectRepository<TKey, T> : IDisposable
     {
         private readonly LightningEnvironment _env;
         private readonly LightningDatabase _db;
-        private readonly ObjectRepositorySettings<T, TKey> _settings;
+        private readonly ObjectRepositorySettings<TKey, T> _settings;
 
-        public ObjectRepository(ObjectRepositorySettings<T, TKey> settings)
+        public ObjectRepository(ObjectRepositorySettings<TKey, T> settings)
         {
             _settings = settings;
             _env = new LightningEnvironment(settings.Path);
@@ -21,10 +21,10 @@ namespace LightningStore
             }
         }
 
-        public ObjectRepositoryTransaction<T, TKey> BeginTransaction(bool readOnly = false)
+        public ObjectRepositoryTransaction<TKey, T> BeginTransaction(bool readOnly = false)
         {
             var tx = _env.BeginTransaction(readOnly ? TransactionBeginFlags.ReadOnly : TransactionBeginFlags.None);
-            return new ObjectRepositoryTransaction<T, TKey>(
+            return new ObjectRepositoryTransaction<TKey, T>(
                 _settings,
                 tx,
                 _db);

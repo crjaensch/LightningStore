@@ -5,14 +5,14 @@ namespace LightningStore
     using System.Linq;
     using LightningDB;
 
-    public class ObjectRepositoryTransaction<T, TKey> : IDisposable
+    public class ObjectRepositoryTransaction<TKey, T> : IDisposable
     {
-        private readonly ObjectRepositorySettings<T, TKey> _settings;
+        private readonly ObjectRepositorySettings<TKey, T> _settings;
         private readonly LightningTransaction _tx;
         private readonly LightningDatabase _db;
 
         internal ObjectRepositoryTransaction(
-            ObjectRepositorySettings<T, TKey> settings,
+            ObjectRepositorySettings<TKey, T> settings,
             LightningTransaction tx,
             LightningDatabase db)
         {

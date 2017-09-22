@@ -32,6 +32,7 @@ namespace LightningStore
                 return ms.ToArray();
             }
         }
+
         public static T DeserializeGzipJson<T>(byte[] data)
         {
             using (var ms = new MemoryStream(data))

@@ -7,7 +7,7 @@ namespace LightningStore
 
     using static Serializer;
 
-    public class DefaultObjectRepositorySettings<T> : ObjectRepositorySettings<T, string>
+    public class DefaultObjectRepositorySettings<T> : ObjectRepositorySettings<string, T>
     {
         public DefaultObjectRepositorySettings(string path)
             : base(path, SerializeGzipJson<T>, DeserializeGzipJson<T>,

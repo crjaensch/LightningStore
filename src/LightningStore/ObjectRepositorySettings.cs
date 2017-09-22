@@ -2,7 +2,7 @@ namespace LightningStore
 {
     using System;
 
-    public class ObjectRepositorySettings<T, TKey>
+    public class ObjectRepositorySettings<TKey, T>
     {
         public readonly string Path;
         public readonly Func<T, byte[]> Serialize;
