@@ -82,7 +82,9 @@ namespace LightningStore
             });
         }
 
-        public void Delete(params TKey[] keys)
+        public void Delete(params TKey[] keys) => DeleteImpl(keys);
+        public void Delete(IEnumerable<TKey> keys) => DeleteImpl(keys);
+        private void DeleteImpl(IEnumerable<TKey> keys)
         {
             _env.WithAutogrowth(() =>
             {

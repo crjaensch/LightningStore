@@ -86,7 +86,7 @@ namespace LightningStore.Tests
             catch { }
         }
 
-        public class Document
+        private class Document
         {
             public string Name { get; set; }
             public string Value { get; set; }
