@@ -53,8 +53,7 @@ namespace LightningStore
                     if (_deletes.Any()) _tx.Value.Delete(_deletes);
                     if (_cache.Any()) _tx.Value.Put(_cache);
                     _tx.Value.Commit();
-                    if (_deletes.Any()) _onCommittedDeletes(_deletes);
-                    if (_cache.Any()) _onCommittedUpserts(_cache);
+                    RaiseNotifications();
                 }
                 finally
                 {
@@ -63,9 +62,16 @@ namespace LightningStore
             }
             catch (LightningException ex) when (ex.StatusCode == LightningDB.Native.Lmdb.MDB_MAP_FULL)
             {
-                if (_deletes.Any()) _repo.Delete(_deletes.ToArray());
+                if (_deletes.Any()) _repo.Delete(_deletes);
                 if (_cache.Any()) _repo.Put(_cache);
+                RaiseNotifications();
             }
+        }
+
+        private void RaiseNotifications()
+        {
+            if (_deletes.Any()) _onCommittedDeletes(_deletes);
+            if (_cache.Any()) _onCommittedUpserts(_cache);
         }
 
         public bool IsDeleted(TKey key) => _deletes.Contains(key);
