@@ -32,6 +32,13 @@ namespace LightningStore.Tests
             cp.Key.ShouldBe(count-1);
         }
 
+        [Fact]
+        public void ReadFromEmpty()
+        {
+            var cp = _changeStream.GetLastCheckpoint();
+            cp.Key.ShouldBe(-1L);
+        }
+
         [Theory]
         [InlineData(5, 2, 6)]
         [InlineData(-1, 2, 0)]
