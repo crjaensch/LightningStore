@@ -19,7 +19,7 @@ done
 for f in test/**/*.csproj; do
     (cd `dirname $f`; dotnet restore; dotnet build
     if [[ `basename $f` =~ Tests ]]; then
-        dotnet test;
+        dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info;
     fi )
 done
 
